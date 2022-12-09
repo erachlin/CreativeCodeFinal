@@ -12,42 +12,22 @@ import { useRef } from "react";
 import { useControls } from "leva";
 import { Vector3 } from "three";
 
+// declaration for shader material for stars rendered in the scene
 const StarMaterial = shaderMaterial({}, starVertexShader, starFragmentShader);
 
+// declation for shader material for all audience locations on the globe
 const GradientMaterial = shaderMaterial(
   { uTime: 0 },
   sphereVertex,
   sphereShader
 );
 
+// declaration for shader material for artist's location on the globe
 const ArtistMaterial = shaderMaterial(
   { uTime: 0 },
   artistVertex,
   artistFragment
 );
-
-//40.00789901806392, -105.27000601728639
-
-let lat1 = 40.00789901806392 * (Math.PI / 180);
-let lng1 = -105.27000601728639 * (Math.PI / 180);
-
-let x1 = Math.cos(lat1) * Math.sin(lng1);
-let y1 = Math.sin(lat1);
-let z1 = Math.cos(lat1) * Math.cos(lng1);
-
-// 28.615205932605956, 77.27145735512924
-
-// let lat2 = 28.615205932605956 * (Math.PI / 180);
-// let lng2 = 77.27145735512924 * (Math.PI / 180);
-
-// 5.602651029866165, -0.18745686785037963
-
-let lat2 = 5.60265102986616 * (Math.PI / 180);
-let lng2 = -0.18745686785037963 * (Math.PI / 180);
-
-let x2 = Math.cos(lat2) * Math.sin(lng2);
-let y2 = Math.sin(lat2);
-let z2 = Math.cos(lat2) * Math.cos(lng2);
 
 let boulder = converttoCartesian(40.00789901806392, -105.27000601728639);
 
@@ -80,6 +60,7 @@ function converttoCartesian(lat, lng) {
   };
 }
 
+// use cartesian coordinates to create arc line curve between two points
 function getCurve(p1, p2) {
   let v1 = new THREE.Vector3(p1.x, p1.y, p1.z);
   let v2 = new THREE.Vector3(p2.x, p2.y, p2.z);
@@ -95,6 +76,7 @@ function getCurve(p1, p2) {
   return path;
 }
 
+// getting curves from artist's location to each audience location
 let accaraCurve = getCurve(boulder, accara);
 let dehliCurve = getCurve(boulder, dehli);
 let annapolisCurve = getCurve(boulder, annapolis);
@@ -105,27 +87,23 @@ let chibaCurve = getCurve(boulder, chiba);
 let sydneyCurve = getCurve(boulder, sydney);
 let laCurve = getCurve(boulder, la);
 
+// turn custom shader materials into JSX components
 extend({ StarMaterial, GradientMaterial, ArtistMaterial });
 
+// used for generating random star locations
 function getRandom(min, max) {
   return Math.random() * (max - min) + min;
 }
 
 export default function Experience() {
+  // load in earth texture
   const props = useTexture({ map: "earthMap.jpg" });
 
+  //offset texture to make lat/long to cartesian conversion work correctly
   props.map.wrapS = THREE.RepeatWrapping; // You do not need to set `.wrapT` in this case
   props.map.offset.x = 1.5708 / (2 * Math.PI);
 
-  //const ref0 = useRef();
-
-  // useFrame((state, delta) => {
-  //   const angle = state.clock.elapsedTime * 0.2;
-  //   state.camera.position.x = Math.sin(angle) * 3;
-  //   state.camera.position.z = Math.cos(angle) * 3;
-  //   state.camera.lookAt(0, 0, 0);
-  // });
-
+  // each instance of an animated shader needs its own ref instance
   const ref1 = useRef();
 
   const ref2 = useRef();
@@ -146,6 +124,7 @@ export default function Experience() {
 
   const ref10 = useRef();
 
+  // related to above, each ref instance gets current time added to it
   useFrame(({ clock }) => (ref1.current.uTime = clock.getElapsedTime()));
 
   useFrame(({ clock }) => (ref2.current.uTime = clock.getElapsedTime()));
@@ -168,16 +147,20 @@ export default function Experience() {
 
   return (
     <>
+      {/* allows for mouse controls of scene */}
       <OrbitControls />
 
       <ambientLight intensity={0.2} />
       <directionalLight />
+      {/* earth mesh */}
       <mesh>
         <sphereGeometry args={[1, 32, 32]} />
         <meshStandardMaterial {...props} />
       </mesh>
+
       <mesh position={[accara.x, accara.y, accara.z]}>
         <sphereGeometry args={[0.015, 8, 8]} rotateX={[3]} />
+        {/* getting extended shader material JSX */}
         <gradientMaterial ref={ref1} />
       </mesh>
       <mesh
@@ -220,6 +203,7 @@ export default function Experience() {
         <gradientMaterial ref={ref10} />
       </mesh>
 
+      {/* using tube geometries for arc lines between artist's location and audience locations */}
       <mesh>
         <tubeGeometry args={[accaraCurve, 20, 0.002, 8, false]} />
         <meshStandardMaterial
@@ -238,7 +222,6 @@ export default function Experience() {
           emmisive={"#ffffff"}
         />
       </mesh>
-
       <mesh>
         <tubeGeometry args={[annapolisCurve, 20, 0.0015, 8, false]} />
         <meshStandardMaterial
@@ -303,6 +286,7 @@ export default function Experience() {
         />
       </mesh>
 
+      {/* generate 400 spheres in random locations with star shader material  */}
       {[...Array(400)].map(() => (
         <mesh
           position={[
@@ -323,13 +307,3 @@ export default function Experience() {
     </>
   );
 }
-
-// export default function ExampleComponent() {
-//   const props =  ;
-
-//   return (
-//     <>
-
-//     </>
-//   );
-// }
