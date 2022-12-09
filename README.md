@@ -6,15 +6,19 @@ React-Three-Fiber Globe with arbitrary points and arc lines between them to repr
 
 ## Built With
 
-* [![React-Three-Fiber][]][https://docs.pmnd.rs/react-three-fiber/getting-started/introduction]
-* [![React-Three/Drei][]][https://github.com/pmndrs/drei#readme]
+* [![React-Three-Fiber][https://docs.pmnd.rs/react-three-fiber/getting-started/introduction]][Fiber-url]
+* [![React-Three/Drei][https://github.com/pmndrs/drei#readme]][Drei-url]
 
 ## Getting Started
 Install all dependencies with
-`npm install`
+```
+npm install
+```
 
 Then, run using
-`npm run dev`
+```
+npm run dev
+```
 
 
 
