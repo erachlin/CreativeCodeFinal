@@ -17,7 +17,7 @@ Then, run using
 npm run dev
 ```
 
-##How it Works
+## How it Works
 
 React Three Fiber (R3F) is a React renderer that allows one to write JSX code that gets converted into a Three.js scene. Drei is collection of community-made components for R3F.
 
